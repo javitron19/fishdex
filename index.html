@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Isla Mujeres Catch List</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Catch List" />
+<meta name="theme-color" content="#0F3E60" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --foam:#EAF4F1; --paper:#FCFBF7; --ink:#16302D; --ink-soft:#5E7572; --ink-faint:#9FB1AE;
+    --flats:#2FB39A; --reef:#14807F; --blue:#0F3E60; --accent:#E8623E; --gold:#C8901F;
+    --line:rgba(22,48,45,0.10); --line-soft:rgba(22,48,45,0.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--foam);line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:90px;}
+  .wrap{max-width:680px;margin:0 auto;}
+
+  /* Hero */
+  .hero{background:linear-gradient(180deg,#2FB39A 0%,#14807F 46%,#0F3E60 100%);color:#fff;padding:calc(34px + env(safe-area-inset-top)) 22px 30px;position:relative;overflow:hidden;}
+  .hero::after{content:"";position:absolute;top:0;right:0;width:54px;height:100%;background:repeating-linear-gradient(180deg,rgba(255,255,255,0.16) 0 1px,transparent 1px 26px);opacity:.5;pointer-events:none;}
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.82);margin-bottom:4px;}
+  .title{font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:.98;font-weight:400;}
+  .title em{font-style:italic;}
+  .lede{margin-top:10px;max-width:30em;font-size:14px;color:rgba(255,255,255,.86);}
+  .gauge{margin-top:22px;}
+  .gauge-top{display:flex;align-items:baseline;gap:10px;}
+  .count{font-family:'Spline Sans Mono',monospace;font-size:30px;font-weight:500;letter-spacing:-.5px;line-height:1;}
+  .count b{color:var(--accent);font-weight:500;}
+  .count .of{color:rgba(255,255,255,.6);}
+  .count-label{font-size:12px;letter-spacing:.04em;color:rgba(255,255,255,.8);text-transform:uppercase;font-weight:600;}
+  .bar{margin-top:10px;height:7px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;}
+  .bar-fill{height:100%;width:0%;border-radius:99px;background:var(--accent);transition:width .5s cubic-bezier(.2,.8,.2,1);}
+  @media (prefers-reduced-motion:reduce){.bar-fill{transition:none}}
+
+  /* Controls */
+  .controls{display:flex;flex-wrap:wrap;gap:8px;row-gap:8px;align-items:center;padding:14px 16px;background:var(--paper);border-bottom:1px solid var(--line);}
+  .seg{display:inline-flex;background:var(--foam);border-radius:99px;padding:3px;border:1px solid var(--line);}
+  .seg button{font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);border:0;background:transparent;padding:7px 14px;border-radius:99px;cursor:pointer;transition:all .15s ease;white-space:nowrap;}
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(22,48,45,.12);}
+  .seg button:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+  .spacer{flex:1;}
+  .icon-btn{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-soft);background:transparent;border:1px solid var(--line);border-radius:99px;padding:7px 12px;cursor:pointer;transition:all .15s ease;}
+  .icon-btn:hover{color:var(--accent);border-color:var(--accent);}
+  .icon-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  /* Slams panel */
+  .slams{background:var(--paper);border-bottom:1px solid var(--line);}
+  .slams-head{width:100%;display:flex;align-items:center;gap:10px;padding:14px 16px;background:transparent;border:0;cursor:pointer;font:inherit;color:var(--ink);}
+  .slams-head:focus-visible{outline:2px solid var(--reef);outline-offset:-2px;}
+  .slams-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+  .slams-count{margin-left:auto;font-family:'Spline Sans Mono',monospace;font-size:12px;color:var(--ink-soft);}
+  .chev{transition:transform .2s ease;color:var(--ink-faint);font-size:11px;}
+  .slams.open .chev{transform:rotate(180deg);}
+  .slams-body{padding:0 16px 16px;}
+  .slams-note{font-size:11.5px;color:var(--ink-soft);margin:0 2px 12px;line-height:1.5;}
+  .slam{background:var(--foam);border:1px solid var(--line-soft);border-radius:12px;padding:12px 13px;margin-bottom:8px;}
+  .slam.done{background:#FBF4E2;border-color:#E7CF95;}
+  .slam-name{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;}
+  .slam-recipe{font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:5px;}
+  .slam-ach{font-size:12.5px;font-weight:600;margin-top:8px;}
+  .slam-ach .got{color:#7A5E12;}
+  .slam-ach .none{color:var(--ink-faint);font-weight:500;}
+  .slam-today{font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--reef);margin-top:5px;}
+
+  /* Zones */
+  .zone{padding:8px 16px 4px;}
+  .zone-head{display:flex;align-items:center;gap:10px;padding:18px 4px 10px;}
+  .zone-dot{width:11px;height:11px;border-radius:99px;flex:none;}
+  .zone-name{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;}
+  .zone-depth{font-family:'Spline Sans Mono',monospace;font-size:11.5px;color:var(--ink-faint);}
+  .zone-count{margin-left:auto;font-family:'Spline Sans Mono',monospace;font-size:12px;color:var(--ink-soft);}
+
+  /* Card */
+  .card{display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line-soft);border-left:4px solid var(--ink-faint);border-radius:12px;padding:11px 12px 11px 12px;margin-bottom:8px;opacity:.62;transition:opacity .18s ease,border-color .18s ease;}
+  .card:hover{opacity:.85;}
+  .card.caught{opacity:1;}
+  .check-btn{flex:none;background:transparent;border:0;padding:2px;cursor:pointer;border-radius:99px;}
+  .check-btn:focus-visible{outline:2px solid var(--reef);outline-offset:1px;}
+  .check-btn.flash{animation:settle .26s ease;}
+  @keyframes settle{0%{transform:translateY(-2px) scale(1.05)}100%{transform:none}}
+  @media (prefers-reduced-motion:reduce){.check-btn.flash{animation:none}}
+  .check{width:26px;height:26px;border-radius:99px;border:2px solid var(--ink-faint);display:grid;place-items:center;transition:all .18s ease;}
+  .check svg{width:14px;height:14px;opacity:0;transform:scale(.4);transition:all .18s ease;}
+  .card.caught .check svg{opacity:1;transform:none;}
+  .tap{display:flex;align-items:center;flex:1;min-width:0;cursor:pointer;background:transparent;border:0;text-align:left;font:inherit;color:inherit;padding:4px 0;}
+  .tap:focus-visible{outline:2px solid var(--reef);outline-offset:2px;border-radius:8px;}
+  .names{min-width:0;}
+  .es{display:block;font-size:16px;font-weight:600;color:var(--ink-faint);transition:color .18s ease;}
+  .card.caught .es{color:var(--ink);}
+  .en{display:block;margin-top:1px;font-size:12.5px;color:var(--ink-faint);transition:color .18s ease;}
+  .card.caught .en{color:var(--ink-soft);}
+  .sci{font-family:'Spline Sans Mono',monospace;font-style:italic;font-size:11px;color:var(--ink-faint);margin-top:1px;display:block;}
+  .statline{font-family:'Spline Sans Mono',monospace;font-size:11px;color:var(--reef);margin-top:3px;display:block;font-style:normal;}
+  .meta{display:flex;align-items:center;gap:9px;flex:none;}
+  .tag{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 7px;border-radius:6px;border:1px solid currentColor;}
+  .tag.release{color:#2E86C1;} .tag.protected{color:#C0392B;} .tag.invasive{color:#E8623E;} .tag.bait{color:#5E8C6A;}
+  .details-pill{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-soft);background:var(--foam);border:1.5px dashed var(--line);border-radius:99px;padding:8px 11px;cursor:pointer;white-space:nowrap;transition:all .15s ease;}
+  .details-pill:hover{border-color:var(--accent);color:var(--accent);}
+  .details-pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .thumb{width:50px;height:50px;border-radius:10px;flex:none;object-fit:cover;cursor:pointer;border:1px solid var(--line);background:var(--foam);display:block;position:relative;}
+  .thumb:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+
+  .empty{text-align:center;color:var(--ink-soft);font-size:14px;padding:30px 20px 10px;}
+  .empty .big{font-family:'Instrument Serif',serif;font-size:24px;color:var(--ink);display:block;margin-bottom:4px;}
+
+  footer{padding:22px 22px calc(34px + env(safe-area-inset-bottom));color:var(--ink-soft);font-size:11.5px;line-height:1.6;}
+  footer .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;}
+  footer .legend span{display:inline-flex;align-items:center;gap:6px;}
+  footer .swatch{width:12px;height:4px;border-radius:2px;display:inline-block;}
+
+  /* Sheet */
+  .sheet-overlay{position:fixed;inset:0;background:rgba(8,24,30,.62);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:18px;overflow:auto;}
+  .sheet-overlay.open{display:flex;}
+  .sheet-card{background:var(--paper);width:100%;max-width:460px;margin:auto;border-radius:20px;padding:22px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.35);}
+  .sheet-x{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);font-size:15px;cursor:pointer;line-height:1;z-index:2;}
+  .sheet-x:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+  .sheet-es{font-family:'Instrument Serif',serif;font-size:30px;line-height:1;color:var(--ink);padding-right:34px;}
+  .sheet-sub{font-family:'Spline Sans Mono',monospace;font-style:italic;font-size:12px;color:var(--ink-soft);margin-top:5px;}
+  .sheet-id{margin-top:16px;}
+  .id-label{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px;display:block;}
+  .sheet-id img{width:100%;max-height:34vh;object-fit:cover;border-radius:14px;display:block;border:1px solid var(--line);background:var(--foam);}
+  .sheet-id svg{width:100%;height:auto;display:block;border-radius:14px;}
+  .sheet-id .id-placeholder{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:120px;padding:22px;background:var(--foam);border:1px dashed var(--line);border-radius:14px;color:var(--ink-soft);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;}
+  .sheet-id .id-placeholder svg{width:60px;height:auto;color:var(--ink-faint);}
+  .sheet-id .id-placeholder:hover{border-color:var(--reef);color:var(--reef);}
+  .sheet-id .id-placeholder:hover svg{color:var(--reef);}
+  .sheet-id .id-placeholder:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+  .sheet-id .idcap{font-size:10px;color:var(--ink-faint);margin-top:6px;line-height:1.5;}
+  .id-actions{display:flex;gap:8px;margin-top:8px;}
+  .id-actions button{flex:1;text-align:center;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px;cursor:pointer;}
+  .id-actions button:hover{border-color:var(--reef);color:var(--reef);}
+  .id-actions button:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+  .bulk-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line-soft);}
+  .bulk-thumb{width:46px;height:46px;border-radius:9px;object-fit:cover;flex:none;border:1px solid var(--line);background:var(--foam);}
+  .bulk-mid{flex:1;min-width:0;}
+  .bulk-fn{font-size:11px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bulk-sel{width:100%;font-family:inherit;font-size:13px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px;margin-top:4px;}
+  .bulk-sel.matched{border-color:var(--reef);}
+  .bulk-sel:focus{outline:2px solid var(--reef);outline-offset:-1px;border-color:var(--reef);}
+  .sheet-unitrow{display:flex;justify-content:flex-end;margin-top:14px;}
+  .unit-toggle{display:inline-flex;background:var(--foam);border:1px solid var(--line);border-radius:99px;padding:3px;}
+  .unit-toggle button{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-soft);border:0;background:transparent;padding:6px 12px;border-radius:99px;cursor:pointer;}
+  .unit-toggle button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(22,48,45,.12);}
+  .unit-toggle button:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+
+  .log-empty{font-size:13px;color:var(--ink-soft);text-align:center;padding:16px 0 6px;}
+  .catch-entry{background:var(--foam);border:1px solid var(--line-soft);border-radius:14px;padding:14px;margin-top:14px;}
+  .ce-top{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+  .ce-date{flex:1;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-width:0;}
+  .ce-date:focus{outline:2px solid var(--reef);outline-offset:-1px;border-color:var(--reef);}
+  .ce-del{width:34px;height:34px;flex:none;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;font-size:14px;}
+  .ce-del:hover{color:var(--accent);border-color:rgba(232,98,62,.4);}
+  .ce-img{width:100%;max-height:30vh;object-fit:cover;border-radius:11px;display:block;border:1px solid var(--line);}
+  .photo-acts{display:flex;gap:8px;margin-top:8px;}
+  .photo-acts button{flex:1;font-family:inherit;font-size:12.5px;font-weight:600;border-radius:9px;padding:8px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);}
+  .photo-acts button.ghost{color:var(--accent);border-color:rgba(232,98,62,.4);}
+  .ce-addphoto{width:100%;border:1.5px dashed var(--line);background:#fff;border-radius:11px;padding:14px;color:var(--ink-soft);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .ce-addphoto:hover{border-color:var(--accent);color:var(--accent);}
+  .ce-addphoto svg{width:18px;height:18px;}
+  .ce-photo{margin-bottom:11px;}
+  .ce-fields{display:flex;gap:10px;margin-bottom:11px;}
+  .ce-fields .col{flex:1;}
+  .field-label{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:5px;display:block;}
+  .inwrap2{position:relative;}
+  .ce-num{width:100%;font-family:'Spline Sans Mono',monospace;font-size:16px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 38px 10px 11px;}
+  .ce-num:focus{outline:2px solid var(--reef);outline-offset:-1px;border-color:var(--reef);}
+  .inwrap2 .unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--ink-faint);}
+  .ce-method{display:flex;gap:5px;margin-bottom:11px;}
+  .ce-method button{flex:1;font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 2px;cursor:pointer;}
+  .ce-method button[aria-pressed="true"]{background:var(--reef);border-color:var(--reef);color:#fff;}
+  .ce-bait{width:100%;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 11px;}
+  .ce-bait:focus{outline:2px solid var(--reef);outline-offset:-1px;border-color:var(--reef);}
+  .add-catch{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:#fff;background:var(--reef);border:0;border-radius:12px;padding:13px;cursor:pointer;margin-top:14px;}
+  .add-catch:hover{filter:brightness(1.05);}
+  .sheet-done{width:100%;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;cursor:pointer;margin-top:10px;}
+
+  /* Tabs */
+  .topbar{position:sticky;top:0;z-index:6;background:var(--paper);}
+  .tabs{display:flex;gap:4px;overflow-x:auto;padding:8px 12px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tabs button{flex:0 0 auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);background:transparent;border:0;border-radius:99px;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:all .15s ease;}
+  .tabs button[aria-selected="true"]{background:var(--blue);color:#fff;}
+  .tabs button:focus-visible{outline:2px solid var(--reef);outline-offset:2px;}
+  /* Game-fish summary strip */
+  .gf-strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 16px 4px;}
+  .gf-strip-main b{font-family:'Spline Sans Mono',monospace;font-size:26px;font-weight:500;color:var(--accent);}
+  .gf-strip-main span{font-size:12px;color:var(--ink-soft);margin-left:4px;}
+  .gf-strip-sub{font-size:12px;color:var(--ink-soft);flex:1;min-width:150px;}
+  .gf-records-link{font-family:inherit;font-size:12px;font-weight:600;color:var(--blue);background:transparent;border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;white-space:nowrap;}
+  .gf-records-link:hover{border-color:var(--blue);}
+  /* Records */
+  .records{padding:16px 16px 24px;}
+  .rec-seg{margin-bottom:16px;}
+  .rec-hero{display:flex;align-items:center;gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:12px;}
+  .rec-hero-num{font-family:'Spline Sans Mono',monospace;font-size:46px;font-weight:500;line-height:1;color:var(--accent);}
+  .rec-hero-lab{font-size:13px;color:var(--ink-soft);line-height:1.45;}
+  .rec-hero-lab b{color:var(--ink);font-weight:700;}
+  .rec-tallies{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .rec-tile{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;}
+  .rec-tile b{display:block;font-family:'Spline Sans Mono',monospace;font-size:22px;font-weight:500;color:var(--ink);line-height:1.1;}
+  .rec-tile span{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+  .rec-block{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;}
+  .rec-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;}
+  .rec-note{font-size:11px;color:var(--ink-faint);margin-top:8px;line-height:1.5;}
+  .rec-prog{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .rec-prog-step{font-size:12.5px;color:var(--ink-soft);background:var(--foam);border-radius:8px;padding:4px 9px;}
+  .rec-prog-step b{color:var(--ink);font-family:'Spline Sans Mono',monospace;}
+  .rec-prog-step.cur{background:var(--gold);color:#fff;}
+  .rec-prog-step.cur b{color:#fff;}
+  .rec-prog-arrow{color:var(--ink-faint);font-size:12px;}
+  .rec-day{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line-soft);}
+  .rec-day:first-of-type{border-top:0;}
+  .rec-day-rank{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--foam);color:var(--ink-soft);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'Spline Sans Mono',monospace;}
+  .rec-day-date{flex:1;font-size:13px;color:var(--ink);min-width:0;}
+  .rec-day-stat{font-size:12px;color:var(--ink-soft);white-space:nowrap;}
+  .rec-day-stat b{color:var(--ink);font-family:'Spline Sans Mono',monospace;}
+  .rec-big{display:flex;gap:10px;}
+  .rec-big-item{flex:1;background:var(--foam);border-radius:10px;padding:10px 12px;}
+  .rec-big-v{display:block;font-family:'Spline Sans Mono',monospace;font-size:18px;font-weight:500;color:var(--ink);}
+  .rec-big-d{font-size:11px;color:var(--ink-soft);}
+  /* Log a trip */
+  .trip-btn{background:var(--reef);border-color:var(--reef);color:#fff;}
+  .trip-btn:hover{filter:brightness(1.06);color:#fff;border-color:var(--reef);}
+  .trip-date-row{display:flex;gap:10px;align-items:flex-end;margin-top:18px;}
+  .trip-row{background:var(--foam);border:1px solid var(--line-soft);border-radius:14px;padding:12px;margin-top:10px;}
+  .trip-row-top{display:flex;gap:8px;align-items:center;}
+  .trip-sel{flex:1;margin-top:0;}
+  .trip-row-top .ce-del{flex:none;}
+  .trip-summary{font-size:12px;color:var(--ink-soft);margin-top:14px;text-align:center;line-height:1.5;}
+  /* In-app dialogs (iOS standalone PWAs disable native alert/confirm/prompt) */
+  .modal-back{position:fixed;inset:0;background:rgba(16,48,45,.45);display:flex;align-items:center;justify-content:center;padding:24px;z-index:9999;opacity:0;pointer-events:none;transition:opacity .15s ease;}
+  .modal-back.open{opacity:1;pointer-events:auto;}
+  .modal-card{background:var(--paper);border-radius:18px;max-width:340px;width:100%;padding:22px 20px 18px;box-shadow:0 20px 50px rgba(16,48,45,.3);transform:translateY(8px);transition:transform .15s ease;}
+  .modal-back.open .modal-card{transform:none;}
+  .modal-title{font-family:'Instrument Serif',serif;font-size:23px;color:var(--ink);margin-bottom:6px;}
+  .modal-body{font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:18px;}
+  .modal-btns{display:flex;gap:8px;}
+  .modal-btns button{flex:1;font-family:inherit;font-size:14px;font-weight:600;border-radius:12px;padding:12px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);transition:filter .15s ease;}
+  .modal-btns button:hover{filter:brightness(.97);}
+  .modal-btns button.primary{background:var(--reef);border-color:var(--reef);color:#fff;}
+  .modal-btns button.danger{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .toast{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;font-size:13px;font-weight:500;padding:11px 16px;border-radius:99px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;max-width:88vw;text-align:center;box-shadow:0 8px 24px rgba(16,48,45,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Isla Mujeres · Quintana Roo</div>
+    <h1 class="title">The Catch <em>List</em></h1>
+    <p class="lede">Every fish you’ve got a shot at around the island — prize game fish and the odd bycatch alike. Log each catch with its date, photo, size, weight, and lure, and chase the daily slams.</p>
+    <div class="gauge">
+      <div class="gauge-top">
+        <div class="count"><b id="c-caught">0</b><span class="of"> / </span><span id="c-total">0</span></div>
+        <div class="count-label">species landed</div>
+      </div>
+      <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    </div>
+  </header>
+
+  <div class="topbar">
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+    <button data-tab="all" role="tab" aria-selected="true">All</button>
+    <button data-tab="flats" role="tab" aria-selected="false">Flats</button>
+    <button data-tab="reef" role="tab" aria-selected="false">Reef</button>
+    <button data-tab="blue" role="tab" aria-selected="false">Blue</button>
+    <button data-tab="game" role="tab" aria-selected="false">Game fish</button>
+    <button data-tab="records" role="tab" aria-selected="false">Records</button>
+  </nav>
+  <div class="controls">
+    <div class="seg" id="filterSeg" role="group" aria-label="Filter species">
+      <button id="f-all" aria-pressed="true">All</button>
+      <button id="f-need" aria-pressed="false">Still needed</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="icon-btn trip-btn" id="tripBtn">+ Trip</button>
+    <button class="icon-btn" id="bulkBtn">+ Photos</button>
+    <button class="icon-btn" id="backupBtn">Backup</button>
+    <button class="icon-btn" id="resetBtn">Reset</button>
+  </div>
+  </div>
+
+  <main id="list"></main>
+
+  <footer>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--flats)"></i> The flats</span>
+      <span><i class="swatch" style="background:var(--reef)"></i> The reef</span>
+      <span><i class="swatch" style="background:var(--blue)"></i> Blue water</span>
+    </div>
+    <span class="tag release" style="font-size:9.5px">Release</span> = sport / catch-and-release &nbsp;·&nbsp;
+    <span class="tag protected" style="font-size:9.5px">Protected</span> = no-take under Mexican regulation &nbsp;·&nbsp;
+    <span class="tag invasive" style="font-size:9.5px">Invasive</span> = please remove, don't release.<br/>
+    Everything is saved on this device only. Use <b>Backup</b> to save a copy you can restore later — clearing your browser data will erase the collection otherwise.
+  </footer>
+</div>
+
+<!-- Species sheet (catch log) -->
+<div class="sheet-overlay" id="sheet" role="dialog" aria-modal="true" aria-label="Catch log">
+  <div class="sheet-card">
+    <button class="sheet-x" id="sheetClose" aria-label="Close">&#10005;</button>
+    <div class="sheet-es" id="sheet-es"></div>
+    <div class="sheet-sub" id="sheet-sub"></div>
+    <div class="sheet-id" id="sheet-id"></div>
+    <div class="sheet-unitrow">
+      <div class="unit-toggle" role="group" aria-label="Units">
+        <button id="u-metric" aria-pressed="true">cm · kg</button>
+        <button id="u-imperial" aria-pressed="false">in · lb</button>
+      </div>
+    </div>
+    <div id="sheet-log"></div>
+    <button class="add-catch" id="addCatch">+ Log a catch</button>
+    <button class="sheet-done" id="sheetDone">Done</button>
+  </div>
+</div>
+
+<!-- Bulk add ID photos -->
+<div class="sheet-overlay" id="bulk" role="dialog" aria-modal="true" aria-label="Bulk add reference photos">
+  <div class="sheet-card">
+    <button class="sheet-x" id="bulkClose" aria-label="Close">&#10005;</button>
+    <div class="sheet-es" style="font-size:24px">Add reference photos</div>
+    <div class="sheet-sub">Pick a batch of photos, assign each to a species, then save them all at once. Tip: name files like “rubia.jpg” or “dorado.jpg” and they'll auto-match.</div>
+    <button class="add-catch" id="bulkPick" style="margin-top:16px">Choose photos</button>
+    <div id="bulk-summary" class="idcap" style="margin-top:12px"></div>
+    <div id="bulk-list"></div>
+    <div class="sheet-actions" id="bulk-actions" style="display:none">
+      <button class="sheet-done" id="bulkCancel" style="margin-top:0">Cancel</button>
+      <button class="primary" id="bulkSave" style="flex:1;font-family:inherit;font-size:14px;font-weight:600;border-radius:12px;padding:13px;cursor:pointer;border:1px solid var(--blue);background:var(--blue);color:#fff;">Save photos</button>
+    </div>
+  </div>
+</div>
+
+<!-- Log a trip -->
+<div class="sheet-overlay" id="trip" role="dialog" aria-modal="true" aria-label="Log a trip">
+  <div class="sheet-card">
+    <button class="sheet-x" id="tripClose" aria-label="Close">&#10005;</button>
+    <div class="sheet-es" style="font-size:24px">Log a trip</div>
+    <div class="sheet-sub">A day on the water: pick each species, how many you landed, and their size. Every fish is added to your catch log, so it counts toward your records and slams.</div>
+    <div class="trip-date-row">
+      <div class="col" style="flex:1"><label class="field-label" for="tripDate">Date</label><input type="date" id="tripDate" class="ce-date"></div>
+      <div class="unit-toggle" role="group" aria-label="Size units">
+        <button id="tu-metric" aria-pressed="true">cm</button>
+        <button id="tu-imperial" aria-pressed="false">in</button>
+      </div>
+    </div>
+    <div class="col" style="margin-top:10px"><label class="field-label" for="tripSpot">Spot (optional)</label><input type="text" id="tripSpot" class="ce-bait" autocomplete="off" placeholder="e.g. Punta Allen — applies to the whole trip"></div>
+    <div id="trip-list"></div>
+    <button class="add-catch" id="tripAddRow" style="background:transparent;color:var(--reef);border:1.5px dashed var(--line);">+ Add fish</button>
+    <div id="trip-summary" class="trip-summary"></div>
+    <div class="sheet-actions" style="display:flex;gap:10px;margin-top:8px;">
+      <button class="sheet-done" id="tripCancel" style="margin-top:0;flex:1;">Cancel</button>
+      <button id="tripSave" style="flex:2;font-family:inherit;font-size:14px;font-weight:600;border-radius:12px;padding:13px;cursor:pointer;border:1px solid var(--reef);background:var(--reef);color:#fff;">Save trip</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+<input type="file" id="idImageInput" accept="image/*" hidden />
+<input type="file" id="bulkInput" accept="image/*" multiple hidden />
+<input type="file" id="restoreInput" accept="application/json,.json" hidden />
+
+<script>
+  const SPECIES = [
+    {id:"tarpon",en:"Tarpon",es:"Sábalo",sci:"Megalops atlanticus",zone:"flats",tag:"release"},
+    {id:"bonefish",en:"Bonefish",es:"Macabí",sci:"Albula vulpes",zone:"flats",tag:"release"},
+    {id:"permit",en:"Permit",es:"Palometa",sci:"Trachinotus falcatus",zone:"flats",tag:"release"},
+    {id:"snook",en:"Common snook",es:"Robalo",sci:"Centropomus undecimalis",zone:"flats"},
+    {id:"seatrout",en:"Spotted seatrout",es:"Corvina pinta",sci:"Cynoscion nebulosus",zone:"flats"},
+    {id:"ladyfish",en:"Ladyfish",es:"Malacho",sci:"Elops saurus",zone:"flats"},
+    {id:"crevalle",en:"Crevalle jack",es:"Jurel toro",sci:"Caranx hippos",zone:"flats"},
+    {id:"horseeye",en:"Horse-eye jack",es:"Jurel ojón",sci:"Caranx latus",zone:"flats"},
+    {id:"barjack",en:"Bar jack",es:"Cojinúa",sci:"Caranx ruber",zone:"flats"},
+    {id:"mangrove",en:"Mangrove snapper",es:"Pargo manglero",sci:"Lutjanus griseus",zone:"flats"},
+    {id:"mojarra",en:"Mojarra",es:"Mojarra",sci:"Eucinostomus spp.",zone:"flats"},
+    {id:"yfmojarra",en:"Yellowfin mojarra",es:"Mojarra de ley",sci:"Gerres cinereus",zone:"flats"},
+    {id:"pompano",en:"Florida pompano",es:"Pámpano",sci:"Trachinotus carolinus",zone:"flats"},
+    {id:"houndfish",en:"Houndfish",es:"Agujón",sci:"Tylosurus crocodilus",zone:"flats"},
+    {id:"lizardfish",en:"Inshore lizardfish",es:"Lagarto / Chile",sci:"Synodus foetens",zone:"flats"},
+    {id:"lookdown",en:"Lookdown",es:"Jorobado / Caballa",sci:"Selene vomer",zone:"flats"},
+    {id:"sergeant",en:"Sergeant major",es:"Píntano",sci:"Abudefduf saxatilis",zone:"flats"},
+    {id:"puffer",en:"Checkered puffer",es:"Botete / Tamboril",sci:"Sphoeroides testudineus",zone:"flats"},
+    {id:"maya",en:"Mayan cichlid",es:"Mojarra castarrica",sci:"Mayaheros urophthalmus",zone:"flats"},
+
+    {id:"yellowtail",en:"Yellowtail snapper",es:"Rubia",sci:"Ocyurus chrysurus",zone:"reef"},
+    {id:"mutton",en:"Mutton snapper",es:"Pargo mulato",sci:"Lutjanus analis",zone:"reef"},
+    {id:"cubera",en:"Cubera snapper",es:"Pargo cubera",sci:"Lutjanus cyanopterus",zone:"reef"},
+    {id:"dogsnap",en:"Dog snapper",es:"Pargo perro",sci:"Lutjanus jocu",zone:"reef"},
+    {id:"lane",en:"Lane snapper",es:"Biajaiba",sci:"Lutjanus synagris",zone:"reef"},
+    {id:"school",en:"Schoolmaster",es:"Canchix",sci:"Lutjanus apodus",zone:"reef"},
+    {id:"silk",en:"Silk snapper",es:"Pargo de lo alto",sci:"Lutjanus vivanus",zone:"reef"},
+    {id:"mahogany",en:"Mahogany snapper",es:"Pargo ojón / Manchego",sci:"Lutjanus mahogoni",zone:"reef"},
+    {id:"vermilion",en:"Vermilion snapper",es:"Besugo",sci:"Rhomboplites aurorubens",zone:"reef"},
+    {id:"blacksnap",en:"Blackfin snapper",es:"Sesí de lo alto",sci:"Lutjanus buccanella",zone:"reef"},
+    {id:"black",en:"Black grouper",es:"Mero negro / Cuna",sci:"Mycteroperca bonaci",zone:"reef"},
+    {id:"red",en:"Red grouper",es:"Mero rojo",sci:"Epinephelus morio",zone:"reef"},
+    {id:"nassau",en:"Nassau grouper",es:"Cherna",sci:"Epinephelus striatus",zone:"reef",tag:"protected"},
+    {id:"gag",en:"Gag grouper",es:"Abadejo",sci:"Mycteroperca microlepis",zone:"reef"},
+    {id:"scamp",en:"Scamp",es:"Mero scamp",sci:"Mycteroperca phenax",zone:"reef"},
+    {id:"yfgrouper",en:"Yellowfin grouper",es:"Bonací gato",sci:"Mycteroperca venenosa",zone:"reef"},
+    {id:"tiger",en:"Tiger grouper",es:"Bonací arará",sci:"Mycteroperca tigris",zone:"reef"},
+    {id:"goliath",en:"Goliath grouper",es:"Mero guasa",sci:"Epinephelus itajara",zone:"reef",tag:"protected"},
+    {id:"redhind",en:"Red hind",es:"Mero cabrilla / Tofí",sci:"Epinephelus guttatus",zone:"reef"},
+    {id:"coney",en:"Coney",es:"Guaseta / Cuna garopa",sci:"Cephalopholis fulva",zone:"reef"},
+    {id:"graysby",en:"Graysby",es:"Enjambre",sci:"Cephalopholis cruentata",zone:"reef"},
+    {id:"barracuda",en:"Great barracuda",es:"Picuda",sci:"Sphyraena barracuda",zone:"reef"},
+    {id:"amberjack",en:"Greater amberjack",es:"Medregal",sci:"Seriola dumerili",zone:"reef"},
+    {id:"almaco",en:"Almaco jack",es:"Medregal limón",sci:"Seriola rivoliana",zone:"reef"},
+    {id:"afpompano",en:"African pompano",es:"Jorobado",sci:"Alectis ciliaris",zone:"reef"},
+    {id:"hogfish",en:"Hogfish",es:"Boquinete",sci:"Lachnolaimus maximus",zone:"reef"},
+    {id:"spanishhog",en:"Spanish hogfish",es:"Vieja / Doncella española",sci:"Bodianus rufus",zone:"reef"},
+    {id:"puddingwife",en:"Puddingwife",es:"Doncella arcoíris",sci:"Halichoeres radiatus",zone:"reef"},
+    {id:"stoplight",en:"Stoplight parrotfish",es:"Loro / Vieja colorada",sci:"Sparisoma viride",zone:"reef"},
+    {id:"cero",en:"Cero mackerel",es:"Carite pintado",sci:"Scomberomorus regalis",zone:"reef"},
+    {id:"spanmack",en:"Spanish mackerel",es:"Sierra",sci:"Scomberomorus maculatus",zone:"reef"},
+    {id:"gtrigger",en:"Gray triggerfish",es:"Cochino",sci:"Balistes capriscus",zone:"reef"},
+    {id:"qtrigger",en:"Queen triggerfish",es:"Cochino bota",sci:"Balistes vetula",zone:"reef"},
+    {id:"oceantrigger",en:"Ocean triggerfish",es:"Cochino de lo alto",sci:"Canthidermis sufflamen",zone:"reef"},
+    {id:"filefish",en:"Scrawled filefish",es:"Lija trompa",sci:"Aluterus scriptus",zone:"reef"},
+    {id:"trunkfish",en:"Smooth trunkfish",es:"Torito / Chapín",sci:"Lactophrys triqueter",zone:"reef"},
+    {id:"cowfish",en:"Honeycomb cowfish",es:"Torito cuerno",sci:"Acanthostracion polygonius",zone:"reef"},
+    {id:"porcupine",en:"Balloonfish",es:"Pez erizo / Guanábana",sci:"Diodon holocanthus",zone:"reef"},
+    {id:"wgrunt",en:"White grunt",es:"Chac-chí / Ronco blanco",sci:"Haemulon plumieri",zone:"reef"},
+    {id:"bgrunt",en:"Bluestriped grunt",es:"Ronco carbonero",sci:"Haemulon sciurus",zone:"reef"},
+    {id:"fgrunt",en:"French grunt",es:"Ronco amarillo / Canario",sci:"Haemulon flavolineatum",zone:"reef"},
+    {id:"tomtate",en:"Tomtate",es:"Ronco jeníguano",sci:"Haemulon aurolineatum",zone:"reef"},
+    {id:"porkfish",en:"Porkfish",es:"Sisi / Burro catalina",sci:"Anisotremus virginicus",zone:"reef"},
+    {id:"margate",en:"Black margate",es:"Burro pompón",sci:"Anisotremus surinamensis",zone:"reef"},
+    {id:"porgy",en:"Jolthead porgy",es:"Pluma bajonado",sci:"Calamus bajonado",zone:"reef"},
+    {id:"ssporgy",en:"Saucereye porgy",es:"Pluma de lo alto",sci:"Calamus calamus",zone:"reef"},
+    {id:"goatfish",en:"Spotted goatfish",es:"Salmonete / Chivo",sci:"Pseudupeneus maculatus",zone:"reef"},
+    {id:"squirrel",en:"Squirrelfish",es:"Candil / Carajuelo",sci:"Holocentrus adscensionis",zone:"reef"},
+    {id:"bigeye",en:"Bigeye",es:"Catalufa / Ojo de perla",sci:"Priacanthus arenatus",zone:"reef"},
+    {id:"chub",en:"Bermuda chub",es:"Chopa",sci:"Kyphosus sectatrix",zone:"reef"},
+    {id:"spadefish",en:"Atlantic spadefish",es:"Paguara / Peluquero",sci:"Chaetodipterus faber",zone:"reef"},
+    {id:"trumpet",en:"Trumpetfish",es:"Trompeta",sci:"Aulostomus maculatus",zone:"reef"},
+    {id:"cornet",en:"Bluespotted cornetfish",es:"Corneta / Pez flauta",sci:"Fistularia tabacaria",zone:"reef"},
+    {id:"scorpionfish",en:"Spotted scorpionfish",es:"Rascacio / Pez escorpión",sci:"Scorpaena plumieri",zone:"reef"},
+    {id:"greenmoray",en:"Green moray",es:"Morena verde",sci:"Gymnothorax funebris",zone:"reef"},
+    {id:"lionfish",en:"Lionfish",es:"Pez león",sci:"Pterois volitans",zone:"reef",tag:"invasive"},
+    {id:"reefshark",en:"Caribbean reef shark",es:"Tiburón coralino",sci:"Carcharhinus perezii",zone:"reef",tag:"release"},
+
+    {id:"sailfish",en:"Sailfish",es:"Pez vela",sci:"Istiophorus albicans",zone:"blue",tag:"release"},
+    {id:"bluemarlin",en:"Blue marlin",es:"Marlín azul",sci:"Makaira nigricans",zone:"blue",tag:"release"},
+    {id:"whitemarlin",en:"White marlin",es:"Marlín blanco",sci:"Kajikia albida",zone:"blue",tag:"release"},
+    {id:"swordfish",en:"Swordfish",es:"Pez espada",sci:"Xiphias gladius",zone:"blue"},
+    {id:"dorado",en:"Mahi-mahi",es:"Dorado",sci:"Coryphaena hippurus",zone:"blue"},
+    {id:"pompanodolphin",en:"Pompano dolphinfish",es:"Dorado chato",sci:"Coryphaena equiselis",zone:"blue"},
+    {id:"wahoo",en:"Wahoo",es:"Peto",sci:"Acanthocybium solandri",zone:"blue"},
+    {id:"kingmack",en:"King mackerel",es:"Carito",sci:"Scomberomorus cavalla",zone:"blue"},
+    {id:"blackfin",en:"Blackfin tuna",es:"Atún aleta negra",sci:"Thunnus atlanticus",zone:"blue"},
+    {id:"yellowfin",en:"Yellowfin tuna",es:"Atún aleta amarilla",sci:"Thunnus albacares",zone:"blue"},
+    {id:"bigeyetuna",en:"Bigeye tuna",es:"Atún patudo / Ojo grande",sci:"Thunnus obesus",zone:"blue"},
+    {id:"skipjack",en:"Skipjack tuna",es:"Barrilete",sci:"Katsuwonus pelamis",zone:"blue"},
+    {id:"littletunny",en:"Little tunny",es:"Bonito",sci:"Euthynnus alletteratus",zone:"blue"},
+    {id:"frigate",en:"Frigate tuna",es:"Melva / Barrilete negro",sci:"Auxis thazard",zone:"blue"},
+    {id:"cobia",en:"Cobia",es:"Esmedregal / Cobia",sci:"Rachycentron canadum",zone:"blue"},
+    {id:"rainbow",en:"Rainbow runner",es:"Salmón / Macarela",sci:"Elagatis bipinnulata",zone:"blue"},
+    {id:"tripletail",en:"Atlantic tripletail",es:"Dormilona",sci:"Lobotes surinamensis",zone:"blue"},
+    {id:"remora",en:"Sharksucker",es:"Pega / Rémora",sci:"Echeneis naucrates",zone:"blue"},
+    {id:"mako",en:"Shortfin mako",es:"Tiburón mako",sci:"Isurus oxyrinchus",zone:"blue",tag:"release"},
+    {id:"blacktip",en:"Blacktip shark",es:"Tiburón volador / Puntas negras",sci:"Carcharhinus limbatus",zone:"blue",tag:"release"},
+    {id:"bullshark",en:"Bull shark",es:"Tiburón toro / Chato",sci:"Carcharhinus leucas",zone:"blue",tag:"release"},
+    {id:"lemonshark",en:"Lemon shark",es:"Tiburón limón / Galano",sci:"Negaprion brevirostris",zone:"blue",tag:"release"},
+    {id:"nurseshark",en:"Nurse shark",es:"Tiburón gata",sci:"Ginglymostoma cirratum",zone:"blue",tag:"release"},
+    {id:"silky",en:"Silky shark",es:"Tiburón sedoso / Jaquetón",sci:"Carcharhinus falciformis",zone:"blue",tag:"release"},
+    {id:"hammerhead",en:"Scalloped hammerhead",es:"Cornuda / Martillo",sci:"Sphyrna lewini",zone:"blue",tag:"release"},
+    {id:"tigershark",en:"Tiger shark",es:"Tiburón tigre",sci:"Galeocerdo cuvier",zone:"blue",tag:"release"}
+  ];
+  const ZONES = [
+    {key:"flats",name:"The Flats",depth:"0 – 3 m",color:"#2FB39A"},
+    {key:"reef",name:"The Reef",depth:"10 – 80 m",color:"#14807F"},
+    {key:"blue",name:"Blue Water",depth:"80 m +",color:"#0F3E60"}
+  ];
+  const SPMAP = {}; SPECIES.forEach(s=>SPMAP[s.id]=s);
+
+  // Game fish = the main inshore game species (the flats / inshore targets), kept small on purpose.
+  const GAMEFISH = new Set(["tarpon","bonefish","permit","snook","seatrout","crevalle","barracuda","cubera"]);
+  SPECIES.forEach(s=>{s.game=GAMEFISH.has(s.id);});
+
+  // IGFA Saltwater Slams (Atlantic / Caribbean). A "Grand Slam" = 3 eligible species caught in one
+  // calendar day; a "Super Grand Slam" = 4. Pools / categories follow the IGFA Grand Slam Club lists.
+  const SLAMS = [
+    {id:"inshore",name:"Inshore Slam",kind:"pool",
+     pool:["bonefish","tarpon","permit","snook","cubera","pompano"]},
+    {id:"offshore",name:"Offshore Slam",kind:"cat",cats:[
+      {label:"Dolphin",ids:["dorado","pompanodolphin"]},
+      {label:"Wahoo",ids:["wahoo"]},
+      {label:"Billfish",ids:["sailfish","bluemarlin","whitemarlin","swordfish"]},
+      {label:"Tuna",ids:["blackfin","yellowfin","bigeyetuna"]}
+    ]},
+    {id:"billfish",name:"Billfish Slam",kind:"pool",
+     pool:["sailfish","bluemarlin","whitemarlin","swordfish"]},
+    {id:"tuna",name:"Tuna Slam",kind:"pool",
+     pool:["blackfin","yellowfin","bigeyetuna","skipjack"]},
+    {id:"shark",name:"Shark Slam",kind:"pool",
+     pool:["mako","blacktip","bullshark","lemonshark","nurseshark","silky","hammerhead","tigershark","reefshark"]}
+  ];
+
+  const checkSVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 6.5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const camSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.8A1 1 0 0 1 9 4.7h6a1 1 0 0 1 .8.5L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.4"/></svg>';
+  const starSVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="#C8901F" aria-hidden="true"><path d="M12 2.2l2.85 5.78 6.38.93-4.62 4.5 1.09 6.35L12 17.27 5.9 20.16l1.09-6.35-4.62-4.5 6.38-.93z"/></svg>';
+
+  const CM_PER_IN = 2.54, KG_PER_LB = 0.45359237;
+
+  // ---------- IndexedDB ----------
+  const DB_NAME="islaCatchDB", STORE="catches", IDSTORE="idphotos";
+  let db=null;
+  function openDB(){return new Promise((res)=>{try{
+    const rq=indexedDB.open(DB_NAME,2);
+    rq.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:"id"});if(!d.objectStoreNames.contains(IDSTORE))d.createObjectStore(IDSTORE,{keyPath:"id"});};
+    rq.onsuccess=e=>{db=e.target.result;res(true);};
+    rq.onerror=()=>res(false);
+  }catch(e){res(false);}});}
+  function idbAll(){return new Promise((res)=>{if(!db)return res([]);try{const tx=db.transaction(STORE,"readonly");const rq=tx.objectStore(STORE).getAll();rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);}catch(e){res([]);}});}
+  function idbPut(rec){return new Promise((res)=>{if(!db)return res();try{const tx=db.transaction(STORE,"readwrite");tx.objectStore(STORE).put(rec);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
+  function idbDel(id){return new Promise((res)=>{if(!db)return res();try{const tx=db.transaction(STORE,"readwrite");tx.objectStore(STORE).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
+  function idAll(){return new Promise((res)=>{if(!db)return res([]);try{const tx=db.transaction(IDSTORE,"readonly");const rq=tx.objectStore(IDSTORE).getAll();rq.onsuccess=()=>res(rq.result||[]);rq.onerror=()=>res([]);}catch(e){res([]);}});}
+  function idPut(rec){return new Promise((res)=>{if(!db)return res();try{const tx=db.transaction(IDSTORE,"readwrite");tx.objectStore(IDSTORE).put(rec);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
+  function idDel(id){return new Promise((res)=>{if(!db)return res();try{const tx=db.transaction(IDSTORE,"readwrite");tx.objectStore(IDSTORE).delete(id);tx.oncomplete=()=>res();tx.onerror=()=>res();}catch(e){res();}});}
+
+  let state = {};          // id -> {id, catches:[{id,date,photo,lengthCm,weightKg,method,bait}]}
+  let filter = "all";
+  let tab = "all";
+  let recordScope = "all";
+  let sheetId = null;
+  let pending = null;      // {sid,cid} awaiting a photo
+  let unit = loadUnit();
+
+  function loadUnit(){try{return localStorage.getItem("isla-units")==="imperial"?"imperial":"metric";}catch(e){return "metric";}}
+  function saveUnit(u){try{localStorage.setItem("isla-units",u);}catch(e){}}
+
+  // ---------- Date / number helpers ----------
+  function pad2(n){return String(n).padStart(2,"0");}
+  function todayStr(){const d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}
+  function isoToDay(iso){try{const d=new Date(iso);return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate());}catch(e){return todayStr();}}
+  function dayShort(ymd){const p=(ymd||"").split("-");if(p.length!==3)return "";const d=new Date(+p[0],+p[1]-1,+p[2]);return d.toLocaleDateString(undefined,{month:"short",day:"numeric"});}
+  function dayLong(ymd){const p=(ymd||"").split("-");if(p.length!==3)return "";const d=new Date(+p[0],+p[1]-1,+p[2]);return d.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});}
+  function fmtNum(n){if(n==null||isNaN(n))return "";const r=Math.round(n*10)/10;return r%1===0?r.toFixed(0):r.toString();}
+  function lenDisplay(cm){if(cm==null)return "";const v=unit==="imperial"?cm/CM_PER_IN:cm;return fmtNum(v)+(unit==="imperial"?" in":" cm");}
+  function wtDisplay(kg){if(kg==null)return "";const v=unit==="imperial"?kg/KG_PER_LB:kg;return fmtNum(v)+(unit==="imperial"?" lb":" kg");}
+
+  function newCatch(day){return {id:"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),date:day||todayStr(),photo:null,lengthCm:null,weightKg:null,method:null,bait:null,spot:null};}
+  function catchesOf(id){const r=state[id];return (r&&r.catches)?r.catches:[];}
+  function isCaught(id){return catchesOf(id).length>0;}
+  function sortedCatches(id){return catchesOf(id).slice().sort((a,b)=>(a.date<b.date?1:(a.date>b.date?-1:0)));}
+  // The record (personal best) catch for a species: biggest by length, then weight, else most recent.
+  function recordCatch(id){
+    const cs=catchesOf(id);if(!cs.length)return null;
+    const wl=cs.filter(c=>c.lengthCm!=null);
+    if(wl.length)return wl.reduce((a,b)=>(b.lengthCm>a.lengthCm)?b:a);
+    const ww=cs.filter(c=>c.weightKg!=null);
+    if(ww.length)return ww.reduce((a,b)=>(b.weightKg>a.weightKg)?b:a);
+    return sortedCatches(id)[0];
+  }
+
+  // ---------- IGFA slam logic (3 species in a day = Grand, 4 = Super Grand) ----------
+  function slamIds(slam){return slam.kind==="cat"?[].concat.apply([],slam.cats.map(c=>c.ids)):slam.pool;}
+  function slamComponentsOnDay(slam,day){
+    if(slam.kind==="cat"){let n=0;slam.cats.forEach(c=>{if(c.ids.some(id=>catchesOf(id).some(x=>x.date===day)))n++;});return n;}
+    let n=0;slam.pool.forEach(id=>{if(catchesOf(id).some(x=>x.date===day))n++;});return n;
+  }
+  function slamTierName(c){return c>=4?"Super Grand Slam":(c>=3?"Grand Slam":"");}
+  function slamDays(slam){
+    const days=new Set();slamIds(slam).forEach(id=>catchesOf(id).forEach(c=>{if(c.date)days.add(c.date);}));
+    const out=[];days.forEach(d=>{const c=slamComponentsOnDay(slam,d);if(c>=3)out.push({date:d,count:c});});
+    out.sort((a,b)=>b.count-a.count||(a.date<b.date?1:-1));return out;
+  }
+  function slamBestAny(slam){
+    const days=new Set();slamIds(slam).forEach(id=>catchesOf(id).forEach(c=>{if(c.date)days.add(c.date);}));
+    let mx=0;days.forEach(d=>{const c=slamComponentsOnDay(slam,d);if(c>mx)mx=c;});return mx;
+  }
+  function slamTodayComponents(slam){return slamComponentsOnDay(slam,todayStr());}
+
+  // ---------- Slams (rendered inside Records) ----------
+  function renderSlams(wrap){
+    wrap.innerHTML="";
+    SLAMS.forEach(sl=>{
+      const achieved=slamDays(sl);
+      const best=achieved.length?achieved[0].count:slamBestAny(sl);
+      const tier=slamTierName(best);
+      const today=slamTodayComponents(sl);
+      const names=slamIds(sl).map(id=>SPMAP[id]?SPMAP[id].es:id);
+      const recipe=(sl.kind==="cat"?sl.cats.map(c=>c.label):names).join(" · ");
+      let latest="";achieved.forEach(d=>{if(d.date>latest)latest=d.date;});
+      const done=achieved.length>0;
+      const row=document.createElement("div");row.className="slam"+(done?" done":"");
+      let achHTML;
+      if(done){achHTML='<span class="got">'+tier+' \u2713 — '+achieved.length+'\u00D7'+(latest?(" · latest "+dayLong(latest)):"")+'</span>';}
+      else{achHTML='<span class="none">Not yet — best day '+best+'/3</span>';}
+      const todayHTML=(today>0&&today<3)?('<div class="slam-today">Today: '+today+'/3 toward a Grand Slam</div>'):"";
+      row.innerHTML='<div class="slam-name">'+sl.name+(done?(" "+starSVG):"")+'</div>'+
+        '<div class="slam-recipe">Any 3 in a day: '+recipe+'</div>'+
+        '<div class="slam-ach">'+achHTML+'</div>'+todayHTML;
+      wrap.appendChild(row);
+    });
+  }
+
+  // ---------- Cards ----------
+  function cardStats(id){
+    const rec=recordCatch(id);if(!rec)return "";
+    const cs=catchesOf(id);
+    const size=[lenDisplay(rec.lengthCm),wtDisplay(rec.weightKg)].filter(Boolean).join(" · ");
+    const p=[];
+    if(size)p.push("PB "+size);
+    if(rec.spot)p.push(rec.spot);
+    if(!size&&!rec.spot&&rec.date)p.push(dayShort(rec.date));
+    if(cs.length>1)p.push(cs.length+" catches");
+    return p.join(" · ");
+  }
+  function zoneHead(zone,got,total){
+    const head=document.createElement("div");head.className="zone-head";
+    head.innerHTML='<span class="zone-dot" style="background:'+zone.color+'"></span>'+
+      '<span class="zone-name" style="color:'+zone.color+'">'+zone.name+'</span>'+
+      '<span class="zone-depth">'+zone.depth+'</span>'+
+      '<span class="zone-count">'+got+'/'+total+'</span>';
+    return head;
+  }
+  function buildCard(s){
+    const zone=ZONES.find(z=>z.key===s.zone)||{color:"var(--ink-faint)"};
+    const isC=isCaught(s.id);const cs=sortedCatches(s.id);
+    const rec=recordCatch(s.id);
+    const photo=(rec&&rec.photo)?rec.photo:((cs.find(c=>c.photo)||{}).photo||null);
+    const card=document.createElement("div");
+    card.className="card"+(isC?" caught":"");
+    card.style.borderLeftColor=isC?zone.color:"var(--ink-faint)";
+
+    const cb=document.createElement("button");cb.className="check-btn";cb.type="button";
+    cb.setAttribute("aria-label",(isC?"Caught — ":"Mark caught — ")+s.es);
+    cb.innerHTML='<span class="check" style="'+(isC?('border-color:'+zone.color+';background:'+zone.color):'')+'">'+checkSVG+'</span>';
+    cb.addEventListener("click",()=>{cb.classList.add("flash");quickToggle(s.id);});
+    cb.addEventListener("animationend",()=>cb.classList.remove("flash"));
+    card.appendChild(cb);
+
+    const tap=document.createElement("button");tap.className="tap";tap.type="button";
+    tap.setAttribute("aria-label","Open "+s.en+" catch log");
+    let namesHTML='<span class="es">'+s.es+'</span><span class="en">'+s.en+'</span><span class="sci">'+s.sci+'</span>';
+    if(isC){const sl=cardStats(s.id);if(sl)namesHTML+='<span class="statline">'+sl+'</span>';}
+    tap.innerHTML='<span class="names">'+namesHTML+'</span>';
+    tap.addEventListener("click",()=>openSheet(s.id));
+    card.appendChild(tap);
+
+    const meta=document.createElement("div");meta.className="meta";
+    if(s.tag){const t=document.createElement("span");t.className="tag "+s.tag;t.textContent=s.tag;meta.appendChild(t);}
+    if(isC){
+      if(photo){
+        const im=document.createElement("img");im.className="thumb";im.src=photo;im.alt=s.en+" catch photo";im.tabIndex=0;
+        im.setAttribute("role","button");im.setAttribute("aria-label","Open "+s.en+" catch log");
+        im.addEventListener("click",()=>openSheet(s.id));
+        im.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openSheet(s.id);}});
+        meta.appendChild(im);
+      }else{
+        const b=document.createElement("button");b.className="details-pill";b.type="button";
+        b.textContent="+ Details";b.setAttribute("aria-label","Add details for "+s.en);
+        b.addEventListener("click",()=>openSheet(s.id));
+        meta.appendChild(b);
+      }
+    }
+    card.appendChild(meta);
+    return card;
+  }
+
+  // ---------- List tabs ----------
+  function visibleSpecies(){
+    if(tab==="game")return SPECIES.filter(s=>s.game);
+    if(tab==="flats"||tab==="reef"||tab==="blue")return SPECIES.filter(s=>s.zone===tab);
+    return SPECIES.slice();
+  }
+  function buildGameSummary(){
+    const gameSp=SPECIES.filter(s=>s.game);
+    const got=gameSp.filter(s=>isCaught(s.id)).length;
+    const best=mostInDay(true);
+    const wrap=document.createElement("div");wrap.className="gf-strip";
+    const left=document.createElement("div");left.className="gf-strip-main";
+    left.innerHTML='<b>'+got+'</b><span>/'+gameSp.length+' game fish landed</span>';
+    const right=document.createElement("div");right.className="gf-strip-sub";
+    right.textContent=best?("Best day: "+best.count+" game fish · "+dayLong(best.date)):"No game fish logged yet — go catch one.";
+    const go=document.createElement("button");go.type="button";go.className="gf-records-link";go.textContent="Records →";
+    go.addEventListener("click",()=>setTab("records"));
+    wrap.appendChild(left);wrap.appendChild(right);wrap.appendChild(go);
+    const note=document.createElement("div");
+    note.style.cssText="flex-basis:100%;font-size:11px;color:var(--ink-faint);line-height:1.5;margin-top:2px;";
+    note.textContent="Main inshore game species — the flats & inshore targets.";
+    wrap.appendChild(note);
+    return wrap;
+  }
+  function renderListTab(){
+    const list=document.getElementById("list");list.innerHTML="";
+    if(tab==="game")list.appendChild(buildGameSummary());
+    const sp=visibleSpecies();
+    const zonesToShow=(tab==="flats"||tab==="reef"||tab==="blue")?ZONES.filter(z=>z.key===tab):ZONES;
+    let shownTotal=0;
+    zonesToShow.forEach(zone=>{
+      const inZone=sp.filter(s=>s.zone===zone.key);
+      if(!inZone.length)return;
+      const got=inZone.filter(s=>isCaught(s.id)).length;
+      const shown=inZone.filter(s=>filter==="all"||!isCaught(s.id));
+      if(!shown.length)return;
+      shownTotal+=shown.length;
+      const section=document.createElement("section");section.className="zone";
+      section.appendChild(zoneHead(zone,got,inZone.length));
+      shown.forEach(s=>section.appendChild(buildCard(s)));
+      list.appendChild(section);
+    });
+    if(shownTotal===0){
+      const e=document.createElement("div");e.className="empty";
+      if(filter==="need"){e.innerHTML='<span class="big">Tablero lleno.</span>Every species in this view is already landed. Switch the filter to “All” to see them.';}
+      else{e.innerHTML='<span class="big">Nothing here.</span>No species in this view.';}
+      list.appendChild(e);
+    }
+  }
+
+  // ---------- Records (all derived from the dated catch log) ----------
+  function flatCatches(gameOnly){const out=[];SPECIES.forEach(s=>{if(gameOnly&&!s.game)return;catchesOf(s.id).forEach(c=>out.push({sid:s.id,date:c.date,len:c.lengthCm,wt:c.weightKg}));});return out;}
+  function dayMap(gameOnly){const m={};flatCatches(gameOnly).forEach(c=>{if(!c.date)return;if(!m[c.date])m[c.date]={count:0,sp:new Set()};m[c.date].count++;m[c.date].sp.add(c.sid);});return m;}
+  function bestDays(gameOnly){const m=dayMap(gameOnly);return Object.keys(m).map(d=>({date:d,count:m[d].count,species:m[d].sp.size})).sort((a,b)=>b.count-a.count||(a.date<b.date?1:-1));}
+  function mostInDay(gameOnly){const b=bestDays(gameOnly);return b.length?b[0]:null;}
+  function recordProgression(gameOnly){const m=dayMap(gameOnly);const days=Object.keys(m).sort();let mx=0;const pr=[];days.forEach(d=>{if(m[d].count>mx){mx=m[d].count;pr.push({date:d,count:m[d].count});}});return pr;}
+  function biggest(gameOnly,key){let best=null;flatCatches(gameOnly).forEach(c=>{const v=c[key];if(v!=null&&(!best||v>best.v))best={v:v,sid:c.sid,date:c.date};});return best;}
+  function totals(gameOnly){const fc=flatCatches(gameOnly);return {fish:fc.length,species:new Set(fc.map(c=>c.sid)).size,days:new Set(fc.filter(c=>c.date).map(c=>c.date)).size};}
+
+  function renderRecords(){
+    const list=document.getElementById("list");list.innerHTML="";
+    const g=(recordScope==="game");
+    const scopeTotal=SPECIES.filter(s=>!g||s.game).length;
+    const wrap=document.createElement("div");wrap.className="records";
+
+    const seg=document.createElement("div");seg.className="seg rec-seg";
+    [["all","All fish"],["game","Game fish"]].forEach(pair=>{
+      const b=document.createElement("button");b.type="button";b.textContent=pair[1];
+      b.setAttribute("aria-pressed",recordScope===pair[0]?"true":"false");
+      b.addEventListener("click",()=>{recordScope=pair[0];render();});
+      seg.appendChild(b);
+    });
+    wrap.appendChild(seg);
+
+    const best=mostInDay(g);const t=totals(g);
+    const hero=document.createElement("div");hero.className="rec-hero";
+    if(best){hero.innerHTML='<div class="rec-hero-num">'+best.count+'</div><div class="rec-hero-lab">most '+(g?"game fish":"fish")+' caught in a day<br><b>'+dayLong(best.date)+'</b></div>';}
+    else{hero.innerHTML='<div class="rec-hero-lab">No catches logged yet. Log catches with dates and your records show up here.</div>';}
+    wrap.appendChild(hero);
+
+    const tg=document.createElement("div");tg.className="rec-tallies";
+    tg.innerHTML='<div class="rec-tile"><b>'+t.fish+'</b><span>fish logged</span></div>'+
+      '<div class="rec-tile"><b>'+t.species+'</b><span>/'+scopeTotal+' species</span></div>'+
+      '<div class="rec-tile"><b>'+t.days+'</b><span>trip day'+(t.days===1?"":"s")+'</span></div>';
+    wrap.appendChild(tg);
+
+    const prog=recordProgression(g);
+    if(prog.length>1){
+      const ps=document.createElement("div");ps.className="rec-block";
+      let inner='<div class="rec-h">Record progression</div><div class="rec-prog">';
+      prog.forEach((pp,i)=>{inner+='<span class="rec-prog-step'+(i===prog.length-1?" cur":"")+'"><b>'+pp.count+'</b> '+dayShort(pp.date)+'</span>'+(i<prog.length-1?'<span class="rec-prog-arrow">→</span>':'');});
+      inner+='</div><div class="rec-note">Each time you beat your best single-day haul. The gold one is your current record.</div>';
+      ps.innerHTML=inner;wrap.appendChild(ps);
+    }
+
+    const bd=bestDays(g).slice(0,8);
+    if(bd.length){
+      const bl=document.createElement("div");bl.className="rec-block";
+      let inner='<div class="rec-h">Best days</div>';
+      bd.forEach((d,i)=>{inner+='<div class="rec-day"><span class="rec-day-rank">'+(i+1)+'</span><span class="rec-day-date">'+dayLong(d.date)+'</span><span class="rec-day-stat"><b>'+d.count+'</b> fish · '+d.species+' sp.</span></div>';});
+      bl.innerHTML=inner;wrap.appendChild(bl);
+    }
+
+    const bLen=biggest(g,"len"),bWt=biggest(g,"wt");
+    if(bLen||bWt){
+      const bl2=document.createElement("div");bl2.className="rec-block";
+      let inner='<div class="rec-h">Biggest</div><div class="rec-big">';
+      if(bLen)inner+='<div class="rec-big-item"><span class="rec-big-v">'+lenDisplay(bLen.v)+'</span><span class="rec-big-d">'+SPMAP[bLen.sid].es+' · '+dayShort(bLen.date)+'</span></div>';
+      if(bWt)inner+='<div class="rec-big-item"><span class="rec-big-v">'+wtDisplay(bWt.v)+'</span><span class="rec-big-d">'+SPMAP[bWt.sid].es+' · '+dayShort(bWt.date)+'</span></div>';
+      inner+='</div>';bl2.innerHTML=inner;wrap.appendChild(bl2);
+    }
+
+    const sb=document.createElement("div");sb.className="rec-block";
+    sb.innerHTML='<div class="rec-h">IGFA slams</div><div class="rec-note" style="margin-top:0;margin-bottom:10px">IGFA Grand Slam Clubs — land 3 eligible species in one calendar day for a Grand Slam, 4 for a Super Grand Slam.</div>';
+    const slamWrap=document.createElement("div");sb.appendChild(slamWrap);
+    wrap.appendChild(sb);
+    renderSlams(slamWrap);
+
+    list.appendChild(wrap);
+  }
+
+  // ---------- Render dispatcher ----------
+  function render(){
+    if(tab==="records")renderRecords();
+    else renderListTab();
+    updateGauge();
+  }
+
+  function updateGauge(){
+    const total=SPECIES.length;
+    const got=SPECIES.filter(s=>isCaught(s.id)).length;
+    document.getElementById("c-caught").textContent=got;
+    document.getElementById("c-total").textContent=total;
+    document.getElementById("barFill").style.width=(got/total*100).toFixed(1)+"%";
+  }
+
+  async function quickToggle(id){
+    const cs=catchesOf(id);
+    if(cs.length===0){
+      state[id]={id,catches:[newCatch(todayStr())]};
+      await idbPut(state[id]);render();
+      return;
+    }
+    if(cs.length===1){
+      const c=cs[0];
+      const bare=!c.photo&&c.lengthCm==null&&c.weightKg==null&&!c.method&&!c.bait;
+      if(bare){delete state[id];await idbDel(id);render();return;}
+    }
+    openSheet(id); // has detail or multiple catches — open the log rather than destroy data
+  }
+
+  // ---------- Photo capture ----------
+  function openCamera(sid,cid){pending={sid,cid,target:"catch"};const inp=document.getElementById("cameraInput");inp.value="";inp.click();}
+  async function onPhotoPicked(){
+    const f=this.files&&this.files[0];if(!f||!pending)return;
+    const p=pending;
+    try{
+      const data=await resizeImage(f,1200,0.82);
+      if(p.target==="id"){
+        idPhotos[p.sid]=data;await idPut({id:p.sid,photo:data});
+        if(sheetId===p.sid)renderIdPanel(SPMAP[p.sid]);
+      }else{
+        const r=state[p.sid];const c=r&&r.catches.find(x=>x.id===p.cid);
+        if(c){c.photo=data;await idbPut(r);if(sheetId===p.sid)renderSheet();render();}
+      }
+    }catch(e){uiToast("That image couldn't be processed. Try another photo.");}
+    this.value="";
+  }
+  document.getElementById("cameraInput").addEventListener("change",onPhotoPicked);
+  document.getElementById("idImageInput").addEventListener("change",onPhotoPicked);
+  function resizeImage(file,maxDim,quality){return new Promise((res,rej)=>{
+    const img=new Image();const url=URL.createObjectURL(file);
+    img.onload=()=>{URL.revokeObjectURL(url);
+      let w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;
+      const scale=Math.min(1,maxDim/Math.max(w,h));
+      const cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));
+      const c=document.createElement("canvas");c.width=cw;c.height=ch;
+      c.getContext("2d").drawImage(img,0,0,cw,ch);
+      try{res(c.toDataURL("image/jpeg",quality));}catch(e){rej(e);}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error("bad image"));};
+    img.src=url;
+  });}
+
+  // ---------- Species sheet (catch log) ----------
+  function ensureSpecies(id){let r=state[id];if(!r){r={id,catches:[]};state[id]=r;}return r;}
+  function openSheet(id){sheetId=id;renderSheet();document.getElementById("sheet").classList.add("open");}
+  function closeSheet(){sheetId=null;document.getElementById("sheet").classList.remove("open");}
+
+  // ---------- ID reference (fully offline) ----------
+  // User-supplied reference photo per species, stored on-device in IndexedDB.
+  const idPhotos={}; // speciesId -> dataURL
+
+  function renderIdPanel(s){
+    const box=document.getElementById("sheet-id");box.innerHTML="";
+    const label=document.createElement("span");label.className="id-label";label.textContent="What it looks like";box.appendChild(label);
+    const holder=document.createElement("div");box.appendChild(holder);
+    const custom=idPhotos[s.id];
+    const acts=document.createElement("div");acts.className="id-actions";
+    if(custom){
+      const img=document.createElement("img");img.src=custom;img.alt=s.en+" reference photo";holder.appendChild(img);
+      const rep=document.createElement("button");rep.type="button";rep.textContent="Replace photo";rep.onclick=()=>openCameraId(s.id);
+      const rem=document.createElement("button");rem.type="button";rem.textContent="Remove photo";
+      rem.onclick=async()=>{delete idPhotos[s.id];await idDel(s.id);renderIdPanel(s);};
+      acts.appendChild(rep);acts.appendChild(rem);box.appendChild(acts);
+    }else{
+      const ph=document.createElement("button");ph.type="button";ph.className="id-placeholder";ph.onclick=()=>openCameraId(s.id);
+      ph.innerHTML='<svg viewBox="0 0 64 46" aria-hidden="true"><rect x="2" y="2" width="60" height="42" rx="7" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/><circle cx="21" cy="18" r="4.5" fill="currentColor" opacity="0.5"/><path d="M7 38 L25 22 L36 31 L46 23 L57 38 Z" fill="currentColor" opacity="0.4"/></svg><span>Add a reference image</span>';
+      holder.appendChild(ph);
+      const cap=document.createElement("div");cap.className="idcap";cap.textContent="No image yet — tap to add your own reference shot from your library. It's stored on this device.";box.appendChild(cap);
+    }
+  }
+  function openCameraId(sid){pending={sid,target:"id"};const inp=document.getElementById("idImageInput");inp.value="";inp.click();}
+
+  // ---------- Bulk add reference photos ----------
+  function norm(s){return (s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();}
+  function autoMatch(fnameNoExt){
+    const f=norm(fnameNoExt);if(!f)return "";
+    for(const s of SPECIES){if([s.id,s.en,s.es,s.sci].some(x=>norm(x)===f))return s.id;}
+    for(const s of SPECIES){for(const x of [s.es,s.en,s.id,s.sci]){const c=norm(x);if(c.length>=4&&(f.indexOf(c)>=0||c.indexOf(f)>=0))return s.id;}}
+    return "";
+  }
+  function buildSpeciesSelect(selectedId){
+    const el=document.createElement("select");el.className="bulk-sel"+(selectedId?" matched":"");
+    const skip=document.createElement("option");skip.value="";skip.textContent="— Skip —";el.appendChild(skip);
+    ZONES.forEach(z=>{
+      const og=document.createElement("optgroup");og.label=z.name;
+      SPECIES.filter(s=>s.zone===z.key).forEach(s=>{
+        const o=document.createElement("option");o.value=s.id;o.textContent=s.es+" ("+s.en+")";if(s.id===selectedId)o.selected=true;og.appendChild(o);
+      });
+      el.appendChild(og);
+    });
+    return el;
+  }
+  let bulkItems=[];
+  function openBulk(){bulkItems=[];document.getElementById("bulk-list").innerHTML="";document.getElementById("bulk-summary").textContent="";document.getElementById("bulk-actions").style.display="none";document.getElementById("bulk").classList.add("open");}
+  function closeBulk(){document.getElementById("bulk").classList.remove("open");}
+  function updateBulkSummary(){const n=bulkItems.length,m=bulkItems.filter(i=>i.speciesId).length;document.getElementById("bulk-summary").textContent=n?(n+" photo"+(n>1?"s":"")+" · "+m+" assigned"):"";}
+  function renderBulkRows(){
+    const list=document.getElementById("bulk-list");list.innerHTML="";
+    bulkItems.forEach((it,idx)=>{
+      const row=document.createElement("div");row.className="bulk-row";
+      const img=document.createElement("img");img.className="bulk-thumb";img.src=it.dataUrl;img.alt="";
+      const mid=document.createElement("div");mid.className="bulk-mid";
+      const fn=document.createElement("div");fn.className="bulk-fn";fn.textContent=it.name;
+      const sel=buildSpeciesSelect(it.speciesId);
+      sel.addEventListener("change",()=>{bulkItems[idx].speciesId=sel.value;sel.classList.toggle("matched",!!sel.value);updateBulkSummary();});
+      mid.appendChild(fn);mid.appendChild(sel);
+      row.appendChild(img);row.appendChild(mid);
+      list.appendChild(row);
+    });
+    document.getElementById("bulk-actions").style.display=bulkItems.length?"flex":"none";
+    updateBulkSummary();
+  }
+  document.getElementById("bulkBtn").addEventListener("click",openBulk);
+  document.getElementById("bulkClose").addEventListener("click",closeBulk);
+  document.getElementById("bulkCancel").addEventListener("click",closeBulk);
+  document.getElementById("bulk").addEventListener("click",e=>{if(e.target.id==="bulk")closeBulk();});
+  document.getElementById("bulkPick").addEventListener("click",()=>{const i=document.getElementById("bulkInput");i.value="";i.click();});
+  document.getElementById("bulkInput").addEventListener("change",async function(){
+    const files=Array.from(this.files||[]);this.value="";if(!files.length)return;
+    const summ=document.getElementById("bulk-summary");
+    document.getElementById("bulk-actions").style.display="none";
+    for(let i=0;i<files.length;i++){
+      summ.textContent="Processing "+(i+1)+" of "+files.length+"…";
+      let dataUrl;try{dataUrl=await resizeImage(files[i],1200,0.82);}catch(e){continue;}
+      const base=(files[i].name||"").replace(/\.[^.]+$/,"");
+      bulkItems.push({name:files[i].name||"photo",dataUrl,speciesId:autoMatch(base)});
+    }
+    renderBulkRows();
+  });
+  document.getElementById("bulkSave").addEventListener("click",async()=>{
+    let k=0;
+    for(const it of bulkItems){if(it.speciesId&&SPMAP[it.speciesId]){idPhotos[it.speciesId]=it.dataUrl;await idPut({id:it.speciesId,photo:it.dataUrl});k++;}}
+    closeBulk();render();
+    uiToast("Saved "+k+" reference photo"+(k===1?"":"s")+".");
+  });
+
+  function renderSheet(){
+    const id=sheetId;if(!id)return;const s=SPMAP[id];
+    document.getElementById("sheet-es").textContent=s.es;
+    document.getElementById("sheet-sub").textContent=s.en+" · "+s.sci;
+    renderIdPanel(s);
+    document.getElementById("u-metric").setAttribute("aria-pressed",unit==="metric");
+    document.getElementById("u-imperial").setAttribute("aria-pressed",unit==="imperial");
+
+    const log=document.getElementById("sheet-log");log.innerHTML="";
+    const cs=sortedCatches(id);
+    if(!cs.length){
+      const e=document.createElement("div");e.className="log-empty";e.textContent="No catches logged yet. Tap “Log a catch” below.";
+      log.appendChild(e);
+      return;
+    }
+    cs.forEach(c=>log.appendChild(buildCatchEntry(id,c)));
+  }
+
+  function buildCatchEntry(sid,c){
+    const r=state[sid];
+    const wrap=document.createElement("div");wrap.className="catch-entry";
+
+    const top=document.createElement("div");top.className="ce-top";
+    const date=document.createElement("input");date.type="date";date.className="ce-date";date.value=c.date||todayStr();
+    date.setAttribute("aria-label","Catch date");
+    date.addEventListener("change",()=>{if(date.value){c.date=date.value;idbPut(r);render();}});
+    const del=document.createElement("button");del.type="button";del.className="ce-del";del.innerHTML="&#10005;";del.title="Delete this catch";del.setAttribute("aria-label","Delete this catch");
+    del.addEventListener("click",()=>deleteCatch(sid,c.id));
+    top.appendChild(date);top.appendChild(del);
+    wrap.appendChild(top);
+
+    const pa=document.createElement("div");pa.className="ce-photo";
+    if(c.photo){
+      const img=document.createElement("img");img.className="ce-img";img.src=c.photo;img.alt=SPMAP[sid].en+" catch photo";
+      const acts=document.createElement("div");acts.className="photo-acts";
+      const rep=document.createElement("button");rep.type="button";rep.textContent="Replace photo";rep.onclick=()=>openCamera(sid,c.id);
+      const rem=document.createElement("button");rem.type="button";rem.className="ghost";rem.textContent="Remove photo";
+      rem.onclick=()=>{c.photo=null;idbPut(r);renderSheet();render();};
+      acts.appendChild(rep);acts.appendChild(rem);pa.appendChild(img);pa.appendChild(acts);
+    }else{
+      const add=document.createElement("button");add.type="button";add.className="ce-addphoto";add.innerHTML=camSVG+"<span>Add photo</span>";
+      add.onclick=()=>openCamera(sid,c.id);
+      pa.appendChild(add);
+    }
+    wrap.appendChild(pa);
+
+    const fields=document.createElement("div");fields.className="ce-fields";
+    fields.appendChild(numCol("Length",c,"lengthCm",unit==="imperial"?"in":"cm",unit==="imperial"?CM_PER_IN:1,r));
+    fields.appendChild(numCol("Weight",c,"weightKg",unit==="imperial"?"lb":"kg",unit==="imperial"?KG_PER_LB:1,r));
+    wrap.appendChild(fields);
+
+    const ml=document.createElement("span");ml.className="field-label";ml.textContent="Method";wrap.appendChild(ml);
+    const meth=document.createElement("div");meth.className="ce-method";
+    [["lure","Lure"],["fly","Fly"],["bait","Bait"],["other","Other"]].forEach(([val,lab])=>{
+      const b=document.createElement("button");b.type="button";b.textContent=lab;b.setAttribute("data-m",val);
+      b.setAttribute("aria-pressed",c.method===val?"true":"false");
+      b.addEventListener("click",()=>{
+        const wasOn=c.method===val;c.method=wasOn?null:val;
+        meth.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x.getAttribute("data-m")===c.method?"true":"false"));
+        idbPut(r);render();
+      });
+      meth.appendChild(b);
+    });
+    wrap.appendChild(meth);
+
+    const bl=document.createElement("span");bl.className="field-label";bl.textContent="Lure / fly / bait";wrap.appendChild(bl);
+    const bait=document.createElement("input");bait.type="text";bait.className="ce-bait";bait.autocomplete="off";
+    bait.placeholder="e.g. white Clouser, diamond jig, live sardine";bait.value=c.bait||"";
+    bait.addEventListener("change",()=>{const v=bait.value.trim();c.bait=v===""?null:v;idbPut(r);render();});
+    wrap.appendChild(bait);
+
+    const wl=document.createElement("span");wl.className="field-label";wl.style.marginTop="11px";wl.textContent="Where / spot";wrap.appendChild(wl);
+    const spot=document.createElement("input");spot.type="text";spot.className="ce-bait";spot.autocomplete="off";
+    spot.placeholder="e.g. Punta Allen";spot.value=c.spot||"";
+    spot.addEventListener("change",()=>{const v=spot.value.trim();c.spot=v===""?null:v;idbPut(r);render();});
+    wrap.appendChild(spot);
+
+    return wrap;
+  }
+
+  function numCol(label,c,key,unitLabel,factor,r){
+    const col=document.createElement("div");col.className="col";
+    const lab=document.createElement("span");lab.className="field-label";lab.textContent=label;col.appendChild(lab);
+    const w=document.createElement("div");w.className="inwrap2";
+    const inp=document.createElement("input");inp.className="ce-num";inp.inputMode="decimal";inp.placeholder="–";
+    inp.value=c[key]!=null?fmtNum(c[key]/factor):"";
+    inp.addEventListener("change",()=>{
+      const v=parseFloat(inp.value);
+      c[key]=(inp.value.trim()===""||isNaN(v))?null:v*factor;
+      idbPut(r);render();
+    });
+    const u=document.createElement("i");u.className="unit";u.textContent=unitLabel;
+    w.appendChild(inp);w.appendChild(u);col.appendChild(w);
+    return col;
+  }
+
+  async function addCatch(){
+    if(!sheetId)return;const r=ensureSpecies(sheetId);
+    r.catches.unshift(newCatch(todayStr()));
+    await idbPut(r);renderSheet();render();
+  }
+  // ---------- In-app dialogs (iOS standalone PWAs disable native alert/confirm/prompt) ----------
+  function uiModal(opts){
+    return new Promise(function(resolve){
+      const back=document.createElement("div");back.className="modal-back";
+      const card=document.createElement("div");card.className="modal-card";
+      if(opts.title){const t=document.createElement("div");t.className="modal-title";t.textContent=opts.title;card.appendChild(t);}
+      if(opts.body){const b=document.createElement("div");b.className="modal-body";b.textContent=opts.body;card.appendChild(b);}
+      const bts=document.createElement("div");bts.className="modal-btns";
+      let done=false;
+      function finish(v){if(done)return;done=true;back.classList.remove("open");setTimeout(function(){back.remove();},180);resolve(v);}
+      (opts.buttons||[]).forEach(function(spec){
+        const b=document.createElement("button");b.type="button";b.textContent=spec.label;if(spec.cls)b.className=spec.cls;
+        b.addEventListener("click",function(){finish(spec.value);});bts.appendChild(b);
+      });
+      card.appendChild(bts);back.appendChild(card);
+      back.addEventListener("click",function(e){if(e.target===back)finish(opts.dismissValue);});
+      document.body.appendChild(back);requestAnimationFrame(function(){back.classList.add("open");});
+    });
+  }
+  function uiConfirm(message,okLabel,danger){
+    return uiModal({body:message,dismissValue:false,buttons:[
+      {label:"Cancel",value:false},
+      {label:okLabel||"OK",value:true,cls:danger?"danger":"primary"}
+    ]});
+  }
+  let toastTimer=null;
+  function uiToast(message){
+    let t=document.getElementById("appToast");
+    if(!t){t=document.createElement("div");t.id="appToast";t.className="toast";document.body.appendChild(t);}
+    t.textContent=message;
+    requestAnimationFrame(function(){t.classList.add("show");});
+    clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove("show");},2600);
+  }
+
+  async function deleteCatch(sid,cid){
+    const r=state[sid];if(!r)return;
+    if(!(await uiConfirm("Delete this catch?","Delete",true)))return;
+    r.catches=r.catches.filter(x=>x.id!==cid);
+    if(r.catches.length===0){delete state[sid];await idbDel(sid);closeSheet();}
+    else{await idbPut(r);renderSheet();}
+    render();
+  }
+
+  document.getElementById("addCatch").addEventListener("click",addCatch);
+  document.getElementById("sheetDone").addEventListener("click",closeSheet);
+  document.getElementById("sheetClose").addEventListener("click",closeSheet);
+  document.getElementById("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet();});
+  function switchUnit(u){if(unit===u)return;unit=u;saveUnit(u);renderSheet();render();if(document.getElementById("trip")&&document.getElementById("trip").classList.contains("open"))renderTripRows();}
+  document.getElementById("u-metric").addEventListener("click",()=>switchUnit("metric"));
+  document.getElementById("u-imperial").addEventListener("click",()=>switchUnit("imperial"));
+
+  // ---------- Tabs ----------
+  function setTab(t){
+    tab=t;
+    document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"));
+    const fs=document.getElementById("filterSeg");if(fs)fs.style.display=(t==="records")?"none":"";
+    render();
+  }
+  document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+
+  // ---------- Filter / reset / backup ----------
+  function setFilter(f){filter=f;document.getElementById("f-all").setAttribute("aria-pressed",f==="all");document.getElementById("f-need").setAttribute("aria-pressed",f==="need");render();}
+  document.getElementById("f-all").addEventListener("click",()=>setFilter("all"));
+  document.getElementById("f-need").addEventListener("click",()=>setFilter("need"));
+  document.getElementById("resetBtn").addEventListener("click",async()=>{
+    if(!(await uiConfirm("Clear every catch and start over? This can’t be undone.","Clear everything",true)))return;
+    for(const id in state){await idbDel(id);}state={};
+    for(const id in idPhotos){await idDel(id);}for(const k in idPhotos)delete idPhotos[k];
+    render();
+  });
+  document.getElementById("backupBtn").addEventListener("click",async()=>{
+    const choice=await uiModal({title:"Backup & restore",body:"Save a copy of your catches and photos to a file, or restore from a backup.",dismissValue:null,buttons:[
+      {label:"Restore",value:"restore"},
+      {label:"Download backup",value:"backup",cls:"primary"}
+    ]});
+    if(choice==="backup"){
+      const blob=new Blob([JSON.stringify({app:"isla-catch-list",version:5,exported:new Date().toISOString(),catches:state,idPhotos:idPhotos})],{type:"application/json"});
+      const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+      a.download="isla-catch-list-backup.json";document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+      uiToast("Backup downloaded.");
+    }else if(choice==="restore"){document.getElementById("restoreInput").click();}
+  });
+  document.getElementById("restoreInput").addEventListener("change",async function(){
+    const f=this.files&&this.files[0];if(!f)return;
+    try{
+      const obj=JSON.parse(await f.text());const cat=obj.catches||obj;let n=0;
+      for(const id in cat){if(SPMAP[id]){state[id]=migrateRecord(id,cat[id]);await idbPut(state[id]);n++;}}
+      if(obj.idPhotos){for(const id in obj.idPhotos){if(SPMAP[id]){idPhotos[id]=obj.idPhotos[id];await idPut({id,photo:obj.idPhotos[id]});}}}
+      render();uiToast("Restored "+n+" species.");
+    }catch(e){uiToast("That file couldn't be read as a backup.");}
+    this.value="";
+  });
+
+  // ---------- Log a trip (fast multi-species catch entry) ----------
+  let tripRows=[];
+  function openTrip(){
+    tripRows=[{speciesId:"",qty:1,sizeCm:null}];
+    document.getElementById("tripDate").value=todayStr();
+    document.getElementById("tripSpot").value="";
+    renderTripRows();
+    document.getElementById("trip").classList.add("open");
+  }
+  function closeTrip(){document.getElementById("trip").classList.remove("open");}
+  function tripUnitLabel(){return unit==="imperial"?"in":"cm";}
+  function updateTripSummary(){
+    let fish=0;const spp=new Set();
+    tripRows.forEach(r=>{const q=Math.floor(r.qty||0);if(r.speciesId&&q>0){fish+=q;spp.add(r.speciesId);}});
+    document.getElementById("trip-summary").textContent=fish?(fish+" fish · "+spp.size+" species this trip"):"Pick a species, how many you caught, and their size.";
+  }
+  function renderTripRows(){
+    document.getElementById("tu-metric").setAttribute("aria-pressed",unit!=="imperial"?"true":"false");
+    document.getElementById("tu-imperial").setAttribute("aria-pressed",unit==="imperial"?"true":"false");
+    const list=document.getElementById("trip-list");list.innerHTML="";
+    const factor=unit==="imperial"?CM_PER_IN:1;
+    tripRows.forEach((r,idx)=>{
+      const row=document.createElement("div");row.className="trip-row";
+      const top=document.createElement("div");top.className="trip-row-top";
+      const sel=buildSpeciesSelect(r.speciesId);sel.classList.add("trip-sel");
+      sel.addEventListener("change",()=>{tripRows[idx].speciesId=sel.value;sel.classList.toggle("matched",!!sel.value);updateTripSummary();});
+      const del=document.createElement("button");del.type="button";del.className="ce-del";del.textContent="\u00D7";del.setAttribute("aria-label","Remove this fish");
+      del.addEventListener("click",()=>{tripRows.splice(idx,1);if(tripRows.length===0)tripRows.push({speciesId:"",qty:1,sizeCm:null});renderTripRows();});
+      top.appendChild(sel);top.appendChild(del);row.appendChild(top);
+      const fields=document.createElement("div");fields.className="ce-fields";fields.style.marginTop="8px";fields.style.marginBottom="0";
+      const qc=document.createElement("div");qc.className="col";
+      const ql=document.createElement("label");ql.className="field-label";ql.textContent="Quantity";qc.appendChild(ql);
+      const qi=document.createElement("input");qi.className="ce-num";qi.inputMode="numeric";qi.value=(r.qty!=null?r.qty:"");qi.style.paddingRight="11px";
+      qi.addEventListener("change",()=>{let v=parseInt(qi.value,10);if(isNaN(v)||v<1)v=1;if(v>200)v=200;qi.value=v;tripRows[idx].qty=v;updateTripSummary();});
+      qc.appendChild(qi);fields.appendChild(qc);
+      const sc=document.createElement("div");sc.className="col";
+      const slab=document.createElement("label");slab.className="field-label";slab.textContent="Size ("+tripUnitLabel()+")";sc.appendChild(slab);
+      const wrap=document.createElement("div");wrap.className="inwrap2";
+      const si=document.createElement("input");si.className="ce-num";si.inputMode="decimal";si.placeholder="–";
+      si.value=(r.sizeCm!=null)?fmtNum(r.sizeCm/factor):"";
+      si.addEventListener("change",()=>{const v=parseFloat(si.value);tripRows[idx].sizeCm=(si.value.trim()===""||isNaN(v))?null:v*factor;});
+      const u=document.createElement("i");u.className="unit";u.textContent=tripUnitLabel();
+      wrap.appendChild(si);wrap.appendChild(u);sc.appendChild(wrap);fields.appendChild(sc);
+      row.appendChild(fields);
+      list.appendChild(row);
+    });
+    updateTripSummary();
+  }
+  function addTripRow(){tripRows.push({speciesId:"",qty:1,sizeCm:null});renderTripRows();}
+  async function saveTrip(){
+    const date=document.getElementById("tripDate").value||todayStr();
+    const tspot=(document.getElementById("tripSpot").value||"").trim()||null;
+    let fish=0;const spp=new Set();const proms=[];
+    tripRows.forEach(r=>{
+      if(!r.speciesId)return;let q=Math.floor(r.qty||0);if(q<1)return;if(q>200)q=200;
+      const rec=ensureSpecies(r.speciesId);
+      for(let i=0;i<q;i++){const c=newCatch(date);c.lengthCm=(r.sizeCm!=null)?r.sizeCm:null;c.spot=tspot;rec.catches.unshift(c);}
+      proms.push(idbPut(rec));fish+=q;spp.add(r.speciesId);
+    });
+    if(fish===0){uiToast("Pick at least one species and a quantity.");return;}
+    await Promise.all(proms);
+    closeTrip();render();
+    uiToast("Logged "+fish+" fish across "+spp.size+" species on "+dayLong(date)+".");
+  }
+  document.getElementById("tripBtn").addEventListener("click",openTrip);
+  document.getElementById("tripClose").addEventListener("click",closeTrip);
+  document.getElementById("tripCancel").addEventListener("click",closeTrip);
+  document.getElementById("trip").addEventListener("click",e=>{if(e.target.id==="trip")closeTrip();});
+  document.getElementById("tripAddRow").addEventListener("click",addTripRow);
+  document.getElementById("tripSave").addEventListener("click",saveTrip);
+  document.getElementById("tu-metric").addEventListener("click",()=>switchUnit("metric"));
+  document.getElementById("tu-imperial").addEventListener("click",()=>switchUnit("imperial"));
+
+  // ---------- Migration (old single-record -> catch log) ----------
+  function migrateRecord(id,r){
+    if(!r)return {id,catches:[]};
+    if(Array.isArray(r.catches))return {id,catches:r.catches};
+    if(r.caught){
+      return {id,catches:[{id:newCatch().id,date:r.date?isoToDay(r.date):todayStr(),photo:r.photo||null,lengthCm:(r.lengthCm==null?null:r.lengthCm),weightKg:(r.weightKg==null?null:r.weightKg),method:r.method||null,bait:r.bait||null}]};
+    }
+    return {id,catches:[]};
+  }
+
+  // ---------- App icon + manifest ----------
+  function roundRectPath(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+  function makeIcon(size){
+    const c=document.createElement("canvas");c.width=c.height=size;const x=c.getContext("2d");
+    const g=x.createLinearGradient(0,0,0,size);g.addColorStop(0,"#2FB39A");g.addColorStop(.55,"#14807F");g.addColorStop(1,"#0F3E60");
+    x.fillStyle=g;roundRectPath(x,0,0,size,size,size*0.22);x.fill();
+    const cx=size*0.50,cy=size*0.52,bw=size*0.24,bh=size*0.155;
+    x.fillStyle="#fff";
+    x.beginPath();x.ellipse(cx,cy,bw,bh,0,0,Math.PI*2);x.fill();
+    const tx=cx-bw*0.92;
+    x.beginPath();x.moveTo(tx,cy);x.lineTo(tx-size*0.13,cy-size*0.10);x.lineTo(tx-size*0.13,cy+size*0.10);x.closePath();x.fill();
+    x.fillStyle="#0F3E60";x.beginPath();x.arc(cx+bw*0.5,cy-bh*0.18,size*0.022,0,Math.PI*2);x.fill();
+    return c.toDataURL("image/png");
+  }
+  function installIcons(){
+    try{
+      const apple=makeIcon(180);
+      const l=document.createElement("link");l.rel="apple-touch-icon";l.href=apple;document.head.appendChild(l);
+      const manifest={name:"Isla Mujeres Catch List",short_name:"Catch List",display:"standalone",
+        background_color:"#0F3E60",theme_color:"#0F3E60",start_url:".",
+        icons:[{src:makeIcon(192),sizes:"192x192",type:"image/png"},{src:makeIcon(512),sizes:"512x512",type:"image/png"}]};
+      const mb=new Blob([JSON.stringify(manifest)],{type:"application/manifest+json"});
+      const ml=document.createElement("link");ml.rel="manifest";ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
+    }catch(e){}
+  }
+
+
+  (async function init(){
+    installIcons();
+    await openDB();
+    const recs=await idbAll();
+    for(const r of recs){const m=migrateRecord(r.id,r);state[r.id]=m;if(!Array.isArray(r.catches)){await idbPut(m);}}
+    const idrecs=await idAll();
+    idrecs.forEach(r=>{if(r&&r.id&&r.photo)idPhotos[r.id]=r.photo;});
+    render();
+  })();
+</script>
+</body>
+</html>
