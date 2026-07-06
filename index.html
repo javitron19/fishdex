@@ -249,6 +249,15 @@
   .modal-btns button.danger{background:var(--accent);border-color:var(--accent);color:#fff;}
   .toast{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;font-size:13px;font-weight:500;padding:11px 16px;border-radius:99px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;max-width:88vw;text-align:center;box-shadow:0 8px 24px rgba(16,48,45,.3);}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  /* Search */
+  .searchbar{padding:8px 12px 0;}
+  .search-wrap{display:flex;align-items:center;gap:8px;background:var(--foam);border:1px solid var(--line);border-radius:10px;padding:0 12px;}
+  .search-wrap svg{width:15px;height:15px;color:var(--ink-faint);flex:none;}
+  .search-input{flex:1;font-family:inherit;font-size:14px;color:var(--ink);background:transparent;border:0;outline:none;padding:10px 0;min-width:0;}
+  .search-input::placeholder{color:var(--ink-faint);}
+  .search-clear{flex:none;border:0;background:transparent;color:var(--ink-faint);font-size:15px;line-height:1;cursor:pointer;padding:6px;display:none;}
+  .search-clear.show{display:block;}
+  .search-head{padding:14px 16px 2px;font-size:12px;color:var(--ink-soft);}
 </style>
 </head>
 <body>
@@ -275,6 +284,13 @@
     <button data-tab="game" role="tab" aria-selected="false">Game fish</button>
     <button data-tab="records" role="tab" aria-selected="false">Records</button>
   </nav>
+  <div class="searchbar">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input id="searchInput" class="search-input" type="text" inputmode="search" enterkeyhint="search" autocomplete="off" placeholder="Search species…" aria-label="Search species" />
+      <button id="searchClear" class="search-clear" type="button" aria-label="Clear search">&#10005;</button>
+    </div>
+  </div>
   <div class="controls">
     <div class="seg" id="filterSeg" role="group" aria-label="Filter species">
       <button id="f-all" aria-pressed="true">All</button>
@@ -529,6 +545,7 @@
   let state = {};          // id -> {id, catches:[{id,date,photo,lengthCm,weightKg,method,bait}]}
   let filter = "all";
   let tab = "all";
+  let query = "";
   let recordScope = "all";
   let sheetId = null;
   let pending = null;      // {sid,cid} awaiting a photo
@@ -789,8 +806,35 @@
   }
 
   // ---------- Render dispatcher ----------
+  function renderSearch(){
+    const list=document.getElementById("list");list.innerHTML="";
+    const q=norm(query);
+    const matches=SPECIES.filter(s=>norm(s.en).includes(q)||norm(s.es).includes(q)||norm(s.sci).includes(q)||norm(s.id).includes(q));
+    const shown=matches.filter(s=>filter==="all"||!isCaught(s.id));
+    const head=document.createElement("div");head.className="search-head";
+    head.textContent=shown.length+(shown.length===1?" result":" results")+(filter==="need"?" still needed":"");
+    list.appendChild(head);
+    if(!shown.length){
+      const e=document.createElement("div");e.className="empty";
+      const big=document.createElement("span");big.className="big";big.textContent="No matches.";
+      e.appendChild(big);
+      e.appendChild(document.createTextNode(matches.length&&filter==="need"?"Everything matching is already landed — switch the filter to All.":"No species match that name."));
+      list.appendChild(e);return;
+    }
+    ZONES.forEach(zone=>{
+      const inZone=shown.filter(s=>s.zone===zone.key);
+      if(!inZone.length)return;
+      const zoneMatches=matches.filter(s=>s.zone===zone.key);
+      const section=document.createElement("section");section.className="zone";
+      section.appendChild(zoneHead(zone,zoneMatches.filter(s=>isCaught(s.id)).length,zoneMatches.length));
+      inZone.forEach(s=>section.appendChild(buildCard(s)));
+      list.appendChild(section);
+    });
+  }
+
   function render(){
-    if(tab==="records")renderRecords();
+    if(query.trim())renderSearch();
+    else if(tab==="records")renderRecords();
     else renderListTab();
     updateGauge();
   }
@@ -1100,11 +1144,19 @@
   // ---------- Tabs ----------
   function setTab(t){
     tab=t;
+    query="";
+    const si=document.getElementById("searchInput");if(si)si.value="";
+    const sc=document.getElementById("searchClear");if(sc)sc.classList.remove("show");
     document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===t?"true":"false"));
     const fs=document.getElementById("filterSeg");if(fs)fs.style.display=(t==="records")?"none":"";
     render();
   }
   document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+  (function(){
+    const si=document.getElementById("searchInput");const sc=document.getElementById("searchClear");
+    si.addEventListener("input",()=>{query=si.value;sc.classList.toggle("show",si.value.length>0);render();});
+    sc.addEventListener("click",()=>{si.value="";query="";sc.classList.remove("show");render();si.focus();});
+  })();
 
   // ---------- Filter / reset / backup ----------
   function setFilter(f){filter=f;document.getElementById("f-all").setAttribute("aria-pressed",f==="all");document.getElementById("f-need").setAttribute("aria-pressed",f==="need");render();}
@@ -1252,6 +1304,8 @@
 
   (async function init(){
     installIcons();
+    // Ask the browser to keep this app's data (reduces iOS evicting your catches/photos).
+    try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
     await openDB();
     const recs=await idbAll();
     for(const r of recs){const m=migrateRecord(r.id,r);state[r.id]=m;if(!Array.isArray(r.catches)){await idbPut(m);}}
